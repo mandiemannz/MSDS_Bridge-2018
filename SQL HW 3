@@ -1,0 +1,82 @@
+#SQL HW3
+#Amanda Arce
+
+CREATE TABLE users (
+userid INT PRIMARY KEY,
+username varchar(55)
+);
+
+INSERT INTO users (userid, username) VALUES (1, "Modesto"),(2, " Ayine"),(3, "Christopher" ),(4, "Cheong Woo"), (5, "Saulat"), ( 6, "Heidy");
+
+
+CREATE TABLE groups (
+groupid INT PRIMARY KEY,
+groupname varchar(55)
+);
+
+INSERT INTO groups (groupid, groupname) VALUES (1,"I.T."), (2, "Sales"), (3, "Administration"), (4, "Operations");
+
+
+CREATE TABLE rooms (
+roomid INT PRIMARY KEY,
+roomname varchar(25)
+);
+
+INSERT INTO rooms (roomid, roomname) VALUES (1, "101"), (2, "102"), (3, "Auditorium A"), (4, " Auditorium B");
+
+CREATE TABLE group_access (
+userid INT,
+groupid INT
+);
+
+INSERT INTO group_access (userid, groupid) VALUES 
+(1, 1), # Modesto to IT
+(2, 1), # Ayine to IT
+(3, 2), # Chris to sales
+(4, 2), # Cheong to sales
+(5, 3); # saulat to admin
+
+CREATE TABLE access (
+groupid INT,
+roomid INT
+);
+
+INSERT INTO access (groupid, roomid)
+VALUES 
+(1,1),  #IT has permission to access to room 101
+(1, 2), # permission to access room 102
+(2, 2), # sales has permission to access  room 102
+(2, 3); # sales has permission to access auditorium A
+
+
+
+# All groups, and the users in each group. A group should appear even if there are no users assigned to the group.
+
+SELECT groups.groupname, users.username
+FROM groups
+LEFT JOIN group_access
+ON groups.groupid = group_access.groupid
+LEFT JOIN users
+ON group_access.userid = users.userid;
+
+# All rooms, and the groups assigned to each room. The rooms should appear even if no groups have been assigned to them.
+
+SELECT rooms.roomname, groups.groupname
+FROM rooms
+LEFT JOIN access ON rooms.roomid = access.roomid
+LEFT JOIN groups ON access.groupid = groups.groupid;
+
+#• A list of users, the groups that they belong to, and the rooms to which they are assigned. This should be sorted alphabetically by user, then by group, then by room.
+
+
+select users.username, groups.groupname, rooms.roomname
+from users
+left join group_access
+on users.userid = group_access.userid
+left join groups
+on group_access.groupid = groups.groupid
+left join access 
+on groups.groupid = access.groupid
+left join rooms
+on access.roomid = rooms.roomid
+order by users.username, groups.groupname, rooms.roomname;
